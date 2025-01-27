@@ -66,21 +66,39 @@
             (parents (cdr lst))))) 
 ;(parents (lst-all Mb Pb))
   
-;; A2
+;; A2-->List All Living Members
+
+(define (is-alive? person)
+  (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f))
 ;TEST: forgot to add two car for line 74 --> wrong result
 (define (living-members lst)
-  (if (null? lst)                   
-      '()                          
-      (if (null? (car (cdr (car (cdr (cdr (car lst))))))) 
+  (if (null? lst) '()                                            
+      (if (is-alive? (car lst)) 
           (cons (car (car lst))               
                 (living-members (cdr lst)))   
           (living-members (cdr lst))))) 
-(living-members Pb)
-  
-;; A3
+;(living-members Pb)
+
+
+
+;; A3 -->Current Age of All Living Members
+;shoud it be separete by branch?
+
+;(let ((date (seconds->date (current-seconds))))
+  ;(display (date-month date)))
+;---convert update datem
+
+
 (define (current-age lst)
   ())
+ 
+
   
+ ; (current-age Mb)
+
+
+
+
 ;; A4
 (define (same-birthday-month lst month)
   ())
