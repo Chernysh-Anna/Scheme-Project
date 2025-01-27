@@ -1,15 +1,13 @@
-;;Partner A: Anna Chernysh 
-;;Student ID: 001376055
-;;Partner B: 
+;;Your full name: 
 ;;Student ID: 
-
+;;Date of birth (day/month/year): 
 
 ;;Data format: Name, Mother, Father, Date of birth, Date of death.
 ;;An empty list means Unknown.
 
 ;;Maternal branch
 (define Mb
-'(((Mary Blake) ((Ana Ali) (Theo Blake)) ((17 9 2022) ()))
+'((((Mary Blake) ((Ana Ali) (Theo Blake)) ((17 9 2022) ())))
 ((Ana Ali) ((Ada West) (Md Ali)) ((4 10 1995) ()))
 ((Theo Blake) ((Mary Jones) (Tom Blake)) ((9 5 1997) ()))
 ((Greta Blake) ((Mary Jones) (Tom Blake)) ((16 3 1999) ()))
@@ -38,33 +36,25 @@
 ;;define lst-all
 
 ;; C1
-;Members in the Maternal Branch
 (define (lst-mb mb)
   mb)
  
-;; C2
-;Members in the Paternal Branch
+;; C2 
 (define (lst-pb pb)
   pb)
   
 ;; C3
-;All Members
 (define (append-lst list1 list2)
         (if (null? list1) list2
             (cons (car list1) (append-lst (cdr list1) list2))))
 			
 (define (lst-all mb pb)
   (append-lst mb pb))
-;(lst-all Mb Pb)
+(lst-all Mb Pb)
 
-;; A1 --> List All Parents in the Branch
-;SHOULD WE DELETE EMPTY LST AND DUPLICATES?
+;; A1
 (define (parents lst)
-  (if (null? lst)                    
-      '()                            
-      (cons (car(cdr (car lst)))       
-            (parents (cdr lst))))) 
-(parents (lst-all Mb Pb))
+  ())
   
 ;; A2
 (define (living-members lst)
