@@ -64,11 +64,18 @@
       '()                            
       (cons (car(cdr (car lst)))       
             (parents (cdr lst))))) 
-(parents (lst-all Mb Pb))
+;(parents (lst-all Mb Pb))
   
 ;; A2
+;TEST: forgot to add two car for line 74 --> wrong result
 (define (living-members lst)
-  ())
+  (if (null? lst)                   
+      '()                          
+      (if (null? (car (cdr (car (cdr (cdr (car lst))))))) 
+          (cons (car (car lst))               
+                (living-members (cdr lst)))   
+          (living-members (cdr lst))))) 
+(living-members Pb)
   
 ;; A3
 (define (current-age lst)
