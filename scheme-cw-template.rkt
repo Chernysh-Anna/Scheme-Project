@@ -65,11 +65,12 @@
       (cons (car(cdr (car lst)))       
             (parents (cdr lst))))) 
 ;(parents (lst-all Mb Pb))
-  
+
 ;; A2-->List All Living Members
 
 (define (is-alive? person)
   (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f))
+
 ;TEST: forgot to add two car for line 74 --> wrong result
 (define (living-members lst)
   (if (null? lst) '()                                            
@@ -82,19 +83,36 @@
 
 
 ;; A3 -->Current Age of All Living Members
-;shoud it be separete by branch?
-
-;(let ((date (seconds->date (current-seconds))))
-  ;(display (date-month date)))
-;---convert update datem
-
-
+;Is it worth to try combine living member+ current age? (search by name so no sorting )!!!!!!!-->
 (define (current-age lst)
-  ())
+  (let* ((date (seconds->date (current-seconds)))  ; Get current date
+         (current-year (date-year date))
+         (current-month (date-month date))
+         (current-day (date-day date)))
+
+    ;calculate age
+    (define (calculate-age birth-date)
+      (let* ((birth-day (car birth-date))   
+             (birth-month (car(cdr birth-date)))  
+             (birth-year (car(cdr(cdr birth-date))))  
+             (year-diff (- current-year birth-year)))  
+        (if (or (< birth-month current-month) 
+                (and (= birth-month current-month) (<= birth-day current-day)))
+            year-diff
+            (- year-diff 1))))  ;; Subtract 1 if birthday hasn’t occurred yet
+
+    ;Main logic
+    (if (null? lst) '()  
+          (if (is-alive? (car lst))
+              (cons (list (car (car(car lst)))   ;;  name
+                          (calculate-age (car (car(cdr(cdr (car lst)))))))  
+                    (current-age (cdr lst)))  
+              (current-age (cdr lst))))))  
+
  
 
   
- ; (current-age Mb)
+;(current-age Pb)
 
 
 

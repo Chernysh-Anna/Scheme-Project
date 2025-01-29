@@ -1,13 +1,15 @@
-;;Your full name: 
+;;Partner A: Anna Chernysh 
+;;Student ID: 001376055
+;;Partner B: 
 ;;Student ID: 
-;;Date of birth (day/month/year): 
+
 
 ;;Data format: Name, Mother, Father, Date of birth, Date of death.
 ;;An empty list means Unknown.
 
 ;;Maternal branch
 (define Mb
-'((((Mary Blake) ((Ana Ali) (Theo Blake)) ((17 9 2022) ())))
+'(((Mary Blake) ((Ana Ali) (Theo Blake)) ((17 9 2022) ()))
 ((Ana Ali) ((Ada West) (Md Ali)) ((4 10 1995) ()))
 ((Theo Blake) ((Mary Jones) (Tom Blake)) ((9 5 1997) ()))
 ((Greta Blake) ((Mary Jones) (Tom Blake)) ((16 3 1999) ()))
@@ -36,34 +38,67 @@
 ;;define lst-all
 
 ;; C1
+;Members in the Maternal Branch
 (define (lst-mb mb)
   mb)
  
-;; C2 
+;; C2
+;Members in the Paternal Branch
 (define (lst-pb pb)
   pb)
   
 ;; C3
+;All Members
 (define (append-lst list1 list2)
         (if (null? list1) list2
             (cons (car list1) (append-lst (cdr list1) list2))))
 			
 (define (lst-all mb pb)
   (append-lst mb pb))
-(lst-all Mb Pb)
+;(lst-all Mb Pb)
 
-;; A1
+;; A1 --> List All Parents in the Branch
+;SHOULD WE DELETE EMPTY LST AND DUPLICATES?
 (define (parents lst)
-  ())
+  (if (null? lst)                    
+      '()                            
+      (cons (car(cdr (car lst)))       
+            (parents (cdr lst))))) 
+;(parents (lst-all Mb Pb))
   
-;; A2
+;; A2-->List All Living Members
+
+(define (is-alive? person)
+  (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f))
+;TEST: forgot to add two car for line 74 --> wrong result
 (define (living-members lst)
-  ())
-  
-;; A3
+  (if (null? lst) '()                                            
+      (if (is-alive? (car lst)) 
+          (cons (car (car lst))               
+                (living-members (cdr lst)))   
+          (living-members (cdr lst))))) 
+;(living-members Pb)
+
+
+
+;; A3 -->Current Age of All Living Members
+;shoud it be separete by branch?
+
+;(let ((date (seconds->date (current-seconds))))
+  ;(display (date-month date)))
+;---convert update datem
+
+
 (define (current-age lst)
   ())
+ 
+
   
+ ; (current-age Mb)
+
+
+
+
 ;; A4
 (define (same-birthday-month lst month)
   ())
