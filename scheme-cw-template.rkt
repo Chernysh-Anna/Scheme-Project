@@ -38,25 +38,21 @@
 ;;define lst-all
 
 ;; C1
-;Members in the Maternal Branch
 (define (lst-mb mb)
   mb)
  
-;; C2
-;Members in the Paternal Branch
+;; C2 
 (define (lst-pb pb)
   pb)
   
 ;; C3
-;All Members
 (define (append-lst list1 list2)
         (if (null? list1) list2
             (cons (car list1) (append-lst (cdr list1) list2))))
 			
 (define (lst-all mb pb)
   (append-lst mb pb))
-;(lst-all Mb Pb)
-
+;;(lst-all Mb Pb)
 ;; A1 --> List All Parents in the Branch
 ;SHOULD WE DELETE EMPTY LST AND DUPLICATES?
 (define (parents lst)
@@ -72,6 +68,7 @@
   (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f))
 
 ;TEST: forgot to add two car for line 74 --> wrong result
+;;posible to do via filter
 (define (living-members lst)
   (if (null? lst) '()                                            
       (if (is-alive? (car lst)) 
@@ -109,7 +106,6 @@
                     (current-age (cdr lst)))  
               (current-age (cdr lst))))))  
 
- 
 
   
 ;(current-age Pb)
@@ -117,17 +113,33 @@
 
 
 
-;; A4
+;; A4 --> return a list of all members who have a birthday in the same month as input month
+;;forgot to add car so it find month of death 
 (define (same-birthday-month lst month)
-  ())
+  (map car
+       (filter (λ (person)
+                 (= month (cadr (car (caddr person)))))  ;; Extract and compare birth month
+               lst))) 
+
   
 ;; A5
-(define (sort-by-last lst)
-  ())
+;;Wrong use >?
+;;didnt converst to string
+(define (sort-by-lastname lst)
+  (sort lst 
+        (lambda (a b) 
+          (string<? 
+           (symbol->string (cadr (car a)))
+           (symbol->string (cadr (car b)))))))
   
 ;; A6
-(define (change-name-to-Juan lst old-name new-name)
-  ())
+(define (change-name-to-Juan lst  old-name new-name)
+  (map 
+   (λ (person) (let ((name (car person)))
+       (if (equal? (car name) old-name)
+           (cons (cons  new-name (cdr name)) (cdr person))
+           person)))
+   lst))
  
 ;;
 ;; B1
