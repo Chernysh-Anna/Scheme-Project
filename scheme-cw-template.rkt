@@ -55,11 +55,13 @@
 ;;(lst-all Mb Pb)
 ;; A1 --> List All Parents in the Branch
 ;SHOULD WE DELETE EMPTY LST AND DUPLICATES?
+;;we use filter to avoid empty list
 (define (parents lst)
-  (if (null? lst)                    
-      '()                            
-      (cons (car(cdr (car lst)))       
-            (parents (cdr lst))))) 
+    (filter (lambda (x) (not (null? (car x))))
+      (if (null? lst) 
+          '() 
+          (cons (car (cdr (car lst))) 
+                (parents (cdr lst)))))) 
 ;(parents (lst-all Mb Pb))
 
 ;; A2-->List All Living Members
@@ -129,8 +131,8 @@
   (sort lst 
         (lambda (a b) 
           (string<? 
-           (symbol->string (cadr (car a)))
-           (symbol->string (cadr (car b)))))))
+           (symbol->string (car(cdr (car a))))
+           (symbol->string (car(cdr (car b))))))))
   
 ;; A6
 (define (change-name-to-Juan lst  old-name new-name)
@@ -168,4 +170,71 @@
   
 ;;
 ;;You should include code to execute each of your functions below.
+(define (menu)
+  (display "------ Family Tree Menu ------\n")
+  (display "C1. List all members from Maternal Branch\n")
+  (display "--> (lst-mb mb)\n")
+  (display "C2. List all members from Paternal Branch\n")
+  (display "--> (lst-pb pb)\n")
+  (display "C3. List all members from both branches\n")
+  (display "--> (lst-all mb pb)\n")
+  (display "A1. List all parents\n")
+  (display "--> (parents lst)\n")
+  (display "A2. List all living members\n")
+  (display "--> (living-members lst)\n")
+  (display "A3. Show current ages of all living members\n")
+  (display "--> (current-age lst)\n")
+  (display "A4. Find members born in a specific month\n")
+  (display "-->  (same-birthday-month lst month)\n")
+  (display "A5. Sort members by last name\n")
+  (display "--> (sort-by-lastname lst)\n")
+  (display "A6. Change name 'John' to 'Juan'\n")
+  (display "--> (change-name-to-Juan lst  old-name new-name)\n")
+  (display "B1. ...\n"))
+;(menu)
+
+(display "------  Code to execute each of functions ------\n")
+
+
+
+  (display "C1. List all members from Maternal Branch\n")
+   (lst-mb Mb)
+
+  (display "C2. List all members from Paternal Branch\n")
+  (lst-pb Pb)  
+
+  (display "C3. List all members from both branches\n")
+  (lst-all Mb Pb)
+
+  (display "A1. List all parents\n")
+  (display "--> Mb \n")
+  (parents Mb)
+  (display "--> Pb \n")
+  (parents Pb)
+  (display "--> All \n")
+  (parents (lst-all Mb Pb))
+
+  (display "A2. List all living members\n")
+  (display "--> ")
+  (living-members (lst-all Mb Pb))
+
+  (display "A3. Show current ages of all living members\n")
+  (display "--> ")
+  (current-age (lst-all Mb Pb))
+
+  (display "A4. Find members born in a specific month\n")
+  (display "--> Example: Members born in month 5\n")
+  (same-birthday-month (lst-all Mb Pb) 5)
+
+  (display "A5. Sort members by last name\n")
+  (display "--> ")
+  (sort-by-lastname (lst-all Mb Pb))
+
+  (display "A6. Change name 'John' to 'Juan'\n")
+  (display "--> ")
+  (change-name-to-Juan (lst-all Mb Pb) 'John 'Juan)
+
+ 
+
+
 
