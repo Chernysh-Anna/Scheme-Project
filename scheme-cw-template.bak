@@ -52,89 +52,96 @@
 			
 (define (lst-all mb pb)
   (append-lst mb pb))
-;;(lst-all Mb Pb)
-;; A1 --> List All Parents in the Branch
-;SHOULD WE DELETE EMPTY LST AND DUPLICATES?
-;;we use filter to avoid empty list
-(define (parents lst)
-    (filter (lambda (x) (not (null? (car x))))
-      (if (null? lst) 
-          '() 
-          (cons (car (cdr (car lst))) 
-                (parents (cdr lst)))))) 
-;(parents (lst-all Mb Pb))
 
-;; A2-->List All Living Members
+;; A1
+;;--> List All Parents in the Branch
+
+(define (tr-parents lst) ;;list of all parents
+  (define (parent lst acc) 
+    (if (null? lst) acc 
+        (parent (cdr lst) (cons (car(cdr (car lst))) acc)))) 
+  (parent lst '()))
+
+(define (remove-duplicates lst) ;;remove duplicates
+  (if (null? lst) '()
+      (let ((rest (remove-duplicates (cdr lst))))
+        (if (member (car lst) rest)
+            rest
+            (cons (car lst) rest)))))
+
+(define (tr-parents-unique lst) ;;format answer
+  (reverse (remove-duplicates (tr-parents lst))))
+
+
+;; A2
+;;-->List All Living Members
 
 (define (is-alive? person)
-  (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f))
+  (if (null? (car (cdr (car (cdr (cdr  person)))))) #t #f)) ;;check if persen has death date
 
-;TEST: forgot to add two car for line 74 --> wrong result
-;;posible to do via filter
-(define (living-members lst)
-  (if (null? lst) '()                                            
-      (if (is-alive? (car lst)) 
-          (cons (car (car lst))               
-                (living-members (cdr lst)))   
-          (living-members (cdr lst))))) 
-;(living-members Pb)
+(define (tr-living-members lst) ;;all living members
+  (define (living-members lst acc) 
+    (if (null? lst) (reverse acc)  
+        (if (is-alive? (car lst)) 
+            (living-members (cdr lst) (cons (car (car lst)) acc)) 
+            (living-members (cdr lst) acc)))) 
 
+  (living-members lst '())) 
 
 
-;; A3 -->Current Age of All Living Members
-;Is it worth to try combine living member+ current age? (search by name so no sorting )!!!!!!!-->
-(define (current-age lst)
-  (let* ((date (seconds->date (current-seconds)))  ; Get current date
-         (current-year (date-year date))
-         (current-month (date-month date))
-         (current-day (date-day date)))
+;; A3
+;;-->Current Age of All Living Members
 
-    ;calculate age
-    (define (calculate-age birth-date)
-      (let* ((birth-day (car birth-date))   
-             (birth-month (car(cdr birth-date)))  
-             (birth-year (car(cdr(cdr birth-date))))  
-             (year-diff (- current-year birth-year)))  
-        (if (or (< birth-month current-month) 
-                (and (= birth-month current-month) (<= birth-day current-day)))
-            year-diff
-            (- year-diff 1))))  ;; Subtract 1 if birthday hasn’t occurred yet
+(define (tr-current-age lst) 
+  (let* ((date (seconds->date (current-seconds)))  ; Get current date 
+         (current-year (date-year date)) 
+         (current-month (date-month date)) 
+         (current-day (date-day date))) 
 
-    ;Main logic
-    (if (null? lst) '()  
-          (if (is-alive? (car lst))
-              (cons (list (car (car(car lst)))   ;;  name
-                          (calculate-age (car (car(cdr(cdr (car lst)))))))  
-                    (current-age (cdr lst)))  
-              (current-age (cdr lst))))))  
+    ; Calculate age 
+
+    (define (calculate-age birth-date) 
+      (let* ((birth-day (car birth-date))    
+             (birth-month (car (cdr birth-date)))   
+             (birth-year (car (cdr (cdr birth-date))))   
+             (year-diff (- current-year birth-year)))   
+        (if (or (< birth-month current-month)  
+                (and (= birth-month current-month) (<= birth-day current-day))) 
+            year-diff 
+            (- year-diff 1))))  ;; Subtract 1 if birthday hasn't occurred yet 
+    ; Main logic 
+
+    (define (current-age lst acc) 
+      (if (null? lst)acc 
+          (if (is-alive? (car lst)) 
+              (current-age (cdr lst)  
+                           (cons (list (car (car lst)) ; Name 
+                                      (calculate-age (car (car (cdr (cdr (car lst))))))  ; Age 
+                                 ) acc)) 
+              (current-age (cdr lst) acc))))   
+    (current-age lst '())))  
 
 
-  
-;(current-age Pb)
+;; A4
+;;--> return a list of all members who have a birthday in the same month as input month
 
-
-
-
-;; A4 --> return a list of all members who have a birthday in the same month as input month
-;;forgot to add car so it find month of death 
 (define (same-birthday-month lst month)
   (map car
        (filter (λ (person)
-                 (= month (cadr (car (caddr person)))))  ;; Extract and compare birth month
-               lst))) 
-
+                 (= month (car (cdr (car (car (cdr (cdr person)))))))) 
+               lst)))
   
 ;; A5
-;;Wrong use >?
-;;didnt converst to string
+;;-->sorts members of the branch by surname
 (define (sort-by-lastname lst)
   (sort lst 
-        (lambda (a b) 
+        (λ (a b) 
           (string<? 
            (symbol->string (car(cdr (car a))))
            (symbol->string (car(cdr (car b))))))))
   
 ;; A6
+;;-->searche for a specific given name and replaces it with a new name 
 (define (change-name-to-Juan lst  old-name new-name)
   (map 
    (λ (person) (let ((name (car person)))
@@ -146,52 +153,82 @@
 ;;
 ;; B1
 (define (children lst)
-  ())
+  (if (null? lst)  ; Base case: If the list is empty, return an empty list
+      '()
+      (let* ((member (car lst))  
+             (children-of-member (car member))) 
+        (append children-of-member(children (cdr lst))))))  ; Recurse on the rest of the family tree
+
+;(children Pb)
+      
   
 ;; B2
 (define (oldest-living-member lst)
-  ())
+  (define current-year 2025)  ; Current year, can be changed
+
+  (define (age person)
+    (- current-year (caddr (car (caddr person)))))  ; Calculate age from birth year
+
+  (define (is-living? person)
+    (null? (cadr (caddr person))))  ; Check if there's no death date
+
+  ; Helper function to find the oldest living member 
+  (define (find-oldest living-members current-oldest)
+    (if (null? living-members)
+        current-oldest  ; Base case
+        (let ((person (car living-members)))
+          (if (> (age person) (age current-oldest))
+              (find-oldest (cdr living-members) person)  ; New oldest
+              (find-oldest (cdr living-members) current-oldest)))))  ; Keep current oldest
+
+  (define living-members (filter is-living? lst))  ; Filter out only living members
+
+  (find-oldest living-members (car living-members)))  ; Start with the first living member
+
+(oldest-living-member Pb)
   
 ;; B3
-(define (average-age-on-death lst)
-  ())
+(define (average-age-at-death lst)
+  (let ((ages (filter number? (map age-at-death lst))))  ;; Get valid ages
+    (if (null? ages)    ;Base case
+        0 
+        (round (/ (apply + ages) (length ages))))))  ;; Calculate rounded average age
+(define (age-at-death person)
+  (let ((birth (caddr (car (caddr person))))    ;; Extract birth year
+        (death (if (null? (cadr (caddr person))) #f (caddr (cadr (caddr person)))))) ;; Extract death year if exists
+    (if death (- death birth) #f)))            ;; Calculate age if death year exists, else return #f
+
+(average-age-at-death Pb)
   
 ;; B4
 (define (birthday-month-same lst month)
-  ())
+  (map car   ;returns the first element from the filtered list
+       (filter (λ (member) ;creates a new list which fulfils the condition 
+                 (= month (cadr (car (caddr member)))))  ;Checks if the input matches the birthday month of the member
+               lst)))
+
+(birthday-month-same Pb '5)
   
 ;; B5
-(define (sort-by-first lst)
-  ())
+(define(sort-by-first lst)
+  (sort lst
+        (λ (a b) ;Define two arguemnts 
+          (string<? ;Compare them by their elements 
+          (symbol->string (car(car a))) ;Converts the first name into a string (for eg "John Smith")
+          (symbol->string (car(car b))))))) ;Converts the secind name into a string (for eg "Ana Smith")
+(sort-by-first Pb)
   
 ;; B6
 (define (change-name-to-Maria lst old-name new-name)
-  ())
+  (if (null? lst)    ; Base case: If list is empty, return an empty list
+      '()
+      (let ((member (car lst)))  ; Get the first member
+        (if (equal? (car (car member)) old-name)  ; Check first name in name list
+            (cons (cons (cons new-name (cdr (car member))) (cdr member))  ; Keep full name
+                  (change-name-to-Maria (cdr lst) old-name new-name))  ; Recursively process the rest
+            (cons member (change-name-to-Maria (cdr lst) old-name new-name))))))  ; Continue recursion
+
   
-;;
-;;You should include code to execute each of your functions below.
-(define (menu)
-  (display "------ Family Tree Menu ------\n")
-  (display "C1. List all members from Maternal Branch\n")
-  (display "--> (lst-mb mb)\n")
-  (display "C2. List all members from Paternal Branch\n")
-  (display "--> (lst-pb pb)\n")
-  (display "C3. List all members from both branches\n")
-  (display "--> (lst-all mb pb)\n")
-  (display "A1. List all parents\n")
-  (display "--> (parents lst)\n")
-  (display "A2. List all living members\n")
-  (display "--> (living-members lst)\n")
-  (display "A3. Show current ages of all living members\n")
-  (display "--> (current-age lst)\n")
-  (display "A4. Find members born in a specific month\n")
-  (display "-->  (same-birthday-month lst month)\n")
-  (display "A5. Sort members by last name\n")
-  (display "--> (sort-by-lastname lst)\n")
-  (display "A6. Change name 'John' to 'Juan'\n")
-  (display "--> (change-name-to-Juan lst  old-name new-name)\n")
-  (display "B1. ...\n"))
-;(menu)
 
 (display "------  Code to execute each of functions ------\n")
 
@@ -208,19 +245,19 @@
 
   (display "A1. List all parents\n")
   (display "--> Mb \n")
-  (parents Mb)
+  (tr-parents-unique Mb)
   (display "--> Pb \n")
-  (parents Pb)
+  (tr-parents-unique Pb)
   (display "--> All \n")
-  (parents (lst-all Mb Pb))
+  (tr-parents-unique (lst-all Mb Pb))
 
   (display "A2. List all living members\n")
   (display "--> ")
-  (living-members (lst-all Mb Pb))
+  (tr-living-members (lst-all Mb Pb))
 
   (display "A3. Show current ages of all living members\n")
   (display "--> ")
-  (current-age (lst-all Mb Pb))
+  (tr-current-age (lst-all Mb Pb))
 
   (display "A4. Find members born in a specific month\n")
   (display "--> Example: Members born in month 5\n")
